@@ -1,9 +1,12 @@
 package com.user.management.util;
 
+import com.user.management.constant.Constant;
+import com.user.management.exception.BusinessException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -16,12 +19,6 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${jwt.access.token.expiration}")
-    private int jwtAccessTokenExpirationMs;
-
-    @Value("${jwt.refresh.token.expiration}")
-    private int jwtRefreshTokenExpirationMs;
-
     private SecretKey key;
 
     // Initializes the key after the class is instantiated and the jwtSecret is injected,
@@ -32,21 +29,12 @@ public class JwtUtil {
     }
 
     // Generate JWT token
-    public String generateAccessToken(String username) {
+    public String generateToken(String username, int tokenExpiration, String issuer) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtAccessTokenExpirationMs))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    // Generate JWT token
-    public String generateRefreshToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtRefreshTokenExpirationMs))
+                .setIssuer(issuer)
+                .setExpiration(new Date((new Date()).getTime() + tokenExpiration))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -73,18 +61,18 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException e) {
-            System.out.println("Invalid JWT signature: " + e.getMessage());
-        } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: " + e.getMessage());
-        } catch (ExpiredJwtException e) {
-            System.out.println("JWT token is expired: " + e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            System.out.println("JWT token is unsupported: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty: " + e.getMessage());
+        } catch (SecurityException | SignatureException e) {
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, Constant.INVALID_JWT_SIGNATURE);
         }
-        return false;
+        catch (MalformedJwtException e) {
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, Constant.INVALID_JWT_TOKEN);
+        } catch (ExpiredJwtException e) {
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, Constant.JWT_TOKEN_EXPIRED);
+        } catch (UnsupportedJwtException e) {
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, Constant.JWT_TOKEN_UNSUPPORTED);
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, Constant.JWT_TOKEN_EMPTY_CLAIMS);
+        }
     }
 }
 

@@ -1,18 +1,14 @@
 package com.user.management.controller;
 
-import com.user.management.dto.LoginRequestDTO;
-import com.user.management.dto.LoginResponseDTO;
-import com.user.management.dto.ResponseDTO;
-import com.user.management.dto.SignupRequestDTO;
+import com.user.management.dto.*;
 import com.user.management.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,5 +26,10 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseDTO<String> registerUser(@Valid @RequestBody SignupRequestDTO signupRequest) {
         return new ResponseDTO<>(HttpStatus.OK, "Success", authService.registerUser(signupRequest));
+    }
+
+    @GetMapping("/access-token")
+    public ResponseDTO<AccessTokenResponseDTO> getAccessToken(@RequestParam String refreshToken) throws IOException {
+        return new ResponseDTO<>(HttpStatus.OK, "Success",authService.getAccessToken(refreshToken));
     }
 }

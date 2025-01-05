@@ -1,13 +1,12 @@
-package com.user.management.dto;
+    package com.user.management.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+    import lombok.Data;
+    import lombok.EqualsAndHashCode;
+    import lombok.experimental.SuperBuilder;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class LoginResponseDTO {
-    private String accessToken;
-    private String refreshToken;
-}
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @SuperBuilder
+    public class LoginResponseDTO extends AccessTokenResponseDTO {
+        private String refreshToken;
+    }
