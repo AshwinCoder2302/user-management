@@ -10,6 +10,8 @@ import com.user.management.util.CommonUtils;
 import com.user.management.util.GenericDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +27,20 @@ public class UserServiceImpl implements UserService {
 
     private final CommonUtils commonUtils;
 
+
     @Override
-    public List<UserResponseDTO> getUsers(int pageNo, int pageSize, String sortBy, String sortMethod) {
+    public UserResponseDTO getUserProfile() {
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = (User) authentication.getPrincipal();
+            BeanUtils.copyProperties(user, userResponseDTO);
+        }
+        return userResponseDTO;
+    }
+
+    @Override
+    public List<UserResponseDTO> getUsers(Integer pageNo, Integer pageSize, String sortBy, String sortMethod) {
         List<User> savedUser = userRepository.findAll();
         return commonUtils.mapEntityListToDTOList(savedUser, UserResponseDTO.class);
     }

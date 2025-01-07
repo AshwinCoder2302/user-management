@@ -1,5 +1,6 @@
 package com.user.management.controller;
 
+import com.user.management.constant.Constant;
 import com.user.management.dto.*;
 import com.user.management.service.AuthService;
 import jakarta.validation.Valid;
@@ -20,16 +21,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseDTO<LoginResponseDTO> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
-        return new ResponseDTO<>(HttpStatus.OK, "Success", authService.authenticateUser(loginRequest));
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, authService.authenticateUser(loginRequest));
     }
 
     @PostMapping("/signup")
     public ResponseDTO<String> registerUser(@Valid @RequestBody SignupRequestDTO signupRequest) {
-        return new ResponseDTO<>(HttpStatus.OK, "Success", authService.registerUser(signupRequest));
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, authService.registerUser(signupRequest));
     }
 
     @GetMapping("/access-token")
     public ResponseDTO<AccessTokenResponseDTO> getAccessToken(@RequestParam String refreshToken) throws IOException {
-        return new ResponseDTO<>(HttpStatus.OK, "Success",authService.getAccessToken(refreshToken));
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS,authService.getAccessToken(refreshToken));
     }
 }

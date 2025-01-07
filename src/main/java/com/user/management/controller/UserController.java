@@ -19,24 +19,29 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/profile")
+    public ResponseDTO<UserResponseDTO> getUserDetails() {
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.getUserProfile());
+    }
+
     @GetMapping
-    public ResponseDTO<List<UserResponseDTO>> getUsers(@RequestParam int pageNo, @RequestParam int pageSize,
-                                                       @RequestParam String sortBy, @RequestParam String sortMethod) {
-        return new ResponseDTO<>(HttpStatus.OK, Constant.SUCCESS, userService.getUsers(pageNo, pageSize, sortBy, sortMethod));
+    public ResponseDTO<List<UserResponseDTO>> getUsers(@RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize,
+                                                       @RequestParam(required = false) String sortBy, @RequestParam(required = false) String sortMethod) {
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.getUsers(pageNo, pageSize, sortBy, sortMethod));
     }
 
     @GetMapping("/{id}")
     public ResponseDTO<UserResponseDTO> getUserById(@PathVariable UUID id){
-        return new ResponseDTO<>(HttpStatus.OK, Constant.SUCCESS, userService.getUser(id));
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.getUser(id));
     }
 
     @PatchMapping("/{id}")
     public ResponseDTO<UserResponseDTO> updateUser(@RequestBody UserRequestDTO userRequest, @PathVariable UUID id){
-        return new ResponseDTO<>(HttpStatus.OK, Constant.SUCCESS, userService.updateUser(userRequest, id));
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.updateUser(userRequest, id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseDTO<String> deleteUser(@PathVariable UUID id){
-        return new ResponseDTO<>(HttpStatus.OK, Constant.SUCCESS, userService.deleteUser(id));
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.deleteUser(id));
     }
 }

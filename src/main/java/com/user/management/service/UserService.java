@@ -8,7 +8,9 @@ import java.util.UUID;
 
 public interface UserService {
 
-    List<UserResponseDTO> getUsers(int pageNo, int pageSize, String sortBy, String sortMethod);
+    UserResponseDTO getUserProfile();
+
+    List<UserResponseDTO> getUsers(Integer pageNo, Integer pageSize, String sortBy, String sortMethod);
 
     UserResponseDTO getUser(UUID id);
 
