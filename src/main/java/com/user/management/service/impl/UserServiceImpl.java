@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public class UserServiceImpl implements UserService {
     private final GenericDao genericDao;
 
     private final CommonUtils commonUtils;
+
+    private final PasswordEncoder encoder;
 
 
     @Override
@@ -58,6 +61,17 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequestDTO, user);
         User updatedUser = userRepository.save(user);
         BeanUtils.copyProperties(updatedUser, userResponseDTO);
+        return userResponseDTO;
+    }
+
+    @Override
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        User user = new User();
+        BeanUtils.copyProperties(userRequestDTO, user);
+        user.setPassword(encoder.encode("12591981"));
+        User savedUser = userRepository.save(user);
+        BeanUtils.copyProperties(savedUser, userResponseDTO);
         return userResponseDTO;
     }
 

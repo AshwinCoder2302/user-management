@@ -16,6 +16,8 @@ public interface UserService {
 
     UserResponseDTO updateUser(UserRequestDTO userRequest, UUID id);
 
+    UserResponseDTO createUser(UserRequestDTO userRequestDTO);
+
     String deleteUser(UUID id);
 
 }

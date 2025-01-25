@@ -44,4 +44,9 @@ public class UserController {
     public ResponseDTO<String> deleteUser(@PathVariable UUID id){
         return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.deleteUser(id));
     }
+
+    @PostMapping
+    public ResponseDTO<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO){
+        return new ResponseDTO<>(HttpStatus.OK.value(), Constant.SUCCESS, userService.createUser(userRequestDTO));
+    }
 }
